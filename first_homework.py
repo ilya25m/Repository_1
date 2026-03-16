@@ -2,8 +2,9 @@ my_favorite_city = "Моє улюблене місце: Дніпро"
 home = "Моя асоціація з Дніпром: \U0001F3E1"
 print(my_favorite_city)
 print(home)
-umbrella = "Порядковий номер парасольки\U00002602 у таблиці юнікод: U+2602 "
+umbrella = "Порядковий номер парасольки\U00002602 у таблиці юнікод:"
 print(umbrella)
+print(ord("☂"))
 pineapple = "\U0001F34D"
 print(pineapple)
 Aeneid = """

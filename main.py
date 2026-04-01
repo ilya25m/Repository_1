@@ -1,55 +1,58 @@
-from pywebio.input import input, slider
+from pywebio.input import input, slider, select
 from pywebio.output import put_markdown, put_text, put_image
-from discount import DISCOUNT_TRIGGER_COST, DISCOUNT_PERCENTAGE
-
 import pictures
 import prices
-from discount import DISCOUNT_TRIGGER_COST
+import math
+from prices import PRICE_TRAIN, PRICE_HOTEL
 
-# Header
-put_markdown("🍽️ Ресторан \"Смачна їжа\"")
+put_markdown("Шкільні поїздки")
 put_markdown("---")
+put_markdown("## Тип транспорту:")
 
-# MENU
-put_markdown("## 📋 Menu:")
-put_image(pictures.PICTURE_PIZZA)
-put_text(f"Pizza by {prices.PRICE_PIZZA} grn")
+put_image(pictures.PICTURE_BUS)
+put_text(f"""🚌 Автобус:
+1 автобус = 40 місць
+ціна = {prices.PRICE_BUS} грн за автобус (за всю поїздку)""")
 
-put_image(pictures.PICTURE_CAVIAR, width="300")
-put_text(f"Caviar by {prices.PRICE_CAVIAR_10g} grn / 10g")
+put_image(pictures.PICTURE_TRAIN)
+put_text(f"""🚆 Поїзд:
+1 людина = {prices.PRICE_TRAIN} грн (в обидві сторони)""")
 
-# Order placing
-put_markdown("## Ordering:")
+put_text(f"""🏨 Проживання:
+1 людина = {prices.PRICE_HOTEL} грн / ніч""")
 
-quantity_pizza = input("How many pizza do you like?", type="number", min=0, value=1)
-quantity_caviar_g = slider(label="How much caviar do you like?", min_value=0, max_value=1000, value=10, step=10)
-quantity_caviar = quantity_caviar_g / 10
+quantity_students = slider(label="Введіть кількість учнів:", min_value=0, max_value=140, value=1, step=1)
+quantity_teachers = slider(label="Введіть кількість вчителів:", min_value=0, max_value=20, value=1, step=1)
+quantity_days = slider(label="Оберіть кількість днів:", min_value=0, max_value=7, value=1, step=1)
+transport = select("Оберіть транспорт:", ["Автобус", "Поїзд"])
 
-# calculation
-cost_pizza = quantity_pizza * prices.PRICE_PIZZA
-cost_caviar = quantity_caviar * prices.PRICE_CAVIAR_10g
-total_cost = cost_caviar + cost_pizza
+if quantity_students == 0:
+        put_text("❌ Помилка: кількість учнів не може бути 0")
 
-discount_summa = 0
-if total_cost >= DISCOUNT_TRIGGER_COST:
-    discount_summa = round(total_cost * DISCOUNT_PERCENTAGE / 100, 0)
+quantity_people = quantity_students + quantity_teachers
+if transport == "Автобус":
+    total_price_transport = quantity_people * prices.PRICE_BUS
+    quantity_bus = math.ceil(quantity_people /40)
 else:
-    discount_summa = 0
-final_cost = total_cost - discount_summa
+    total_price_transport = quantity_people * prices.PRICE_TRAIN
+    quantity_bus = 0
 
-# ORDER
-put_markdown("## RESULT:")
+if quantity_days >0:
+    total_price_hotel = quantity_people * prices.PRICE_HOTEL
+else:
+    total_price_hotel = 0
+total_price = total_price_hotel + total_price_transport
+discount = 0
+if quantity_people >30:
+    discount = total_price * 0.10
+total_price = total_price - discount
 
-if cost_pizza:
-    put_text(f"🍕Pizza: {quantity_pizza} / {prices.PRICE_PIZZA} grn = {cost_pizza}")
-if cost_caviar:
-    put_text(f"🍕cost_caviar: {quantity_caviar_g} / {prices.PRICE_CAVIAR_10g} grn/10g = {cost_caviar}")
-
-if total_cost:
-    put_text(f"Total cost: {total_cost}")
-
-if discount_summa:
-    put_text(f"discount_summa : {discount_summa}")
-    put_text(f"))))))))))))))")
-
-put_text(f"final_cost: {final_cost}")
+put_markdown("---")
+put_text(f"""Загальна кількість людей: {quantity_people}
+Транспорт: {transport}
+Кількість автобусів (якщо є): {quantity_bus}
+Вартісь транспорту: {total_price_transport} грн
+Вартість проживання: {total_price_hotel} грн
+Знижка: {discount} грн
+Загальна вартість: {total_price} грн
+""")

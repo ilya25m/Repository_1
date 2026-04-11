@@ -31,3 +31,8 @@ insurance = car["price"] * 0.005
 car["insurance"] = insurance
 
 print("Insurance:", insurance)
+
+gasoline = 93
+
+cost_of_gasoline_for_200km = car.get("fuel_consumption") * 2 * gasoline
+print(f"cost of gasoline for 200km: {cost_of_gasoline_for_200km} grn")

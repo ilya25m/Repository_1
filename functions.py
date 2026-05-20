@@ -37,4 +37,3 @@ def sum_from_string(numbers: str = "", separator: str = ",") -> float:
     total = total * 1.0
     total = round(total, 2)
 
-    return total
